@@ -11,11 +11,10 @@ const navigate = useNavigate()
 const [nome, setNome]=useState("")
 const [email, setEmail]=useState("")
 const [senha, setSenha]=useState("")
-
-const [teste, setTeste]=useState([])
+const url = process.env.REACT_APP_API_URL
 
 useEffect(() => {
-  const promise = axios.get("http://localhost:5000/cadastro")
+  const promise = axios.get(`${url}/cadastro`)
   promise.then((res) => {
     console.log(res.data)
   })
@@ -25,8 +24,7 @@ useEffect(() => {
 function fazerCadastro(e){
   e.preventDefault()
   const body = {nome, email, senha}
-  console.log(body)
-  axios.post("http://localhost:5000/cadastro", body)
+  axios.post(`${url}/cadastro`, body)
         .then(res => {navigate("/")})
         .catch(err => console.log(err.response.data))
   

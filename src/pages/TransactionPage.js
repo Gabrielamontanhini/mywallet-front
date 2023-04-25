@@ -16,6 +16,7 @@ export default function TransactionsPage() {
   const [dia, setDia] = useState()
   const { sessao } = useContext(UsuarioContext)
   
+  const url = process.env.REACT_APP_API_URL
 
   useEffect(() => {
     setDia(dayjs().format('DD/MM'))
@@ -32,9 +33,9 @@ function salvarMovimento(e){
 setValor(parseFloat(valor))
 
   const body={valor, descrição, dia}
-    const promise = axios.post(`http://localhost:5000/nova-transacao/${tipo}`,body, config)
+    const promise = axios.post(`${url}/nova-transacao/${tipo}`,body, config)
     promise.then((res)=>{
-      console.log(res.data, `Movimento adicionado!${typeof(valor)}`)
+      console.log(res.data, `Movimento adicionado!`)
       navigate("/home")
     })
 

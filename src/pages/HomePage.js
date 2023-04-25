@@ -7,116 +7,110 @@ import { useContext, useEffect, useState } from "react"
 import { UsuarioContext } from "../contexts/UsuarioContext"
 import Teste from "../components/Teste"
 
-
 export default function HomePage() {
   const [extrato, setExtrato] = useState([])
   const { sessao, setSessao } = useContext(UsuarioContext)
   const [saldo, setSaldo] = useState(0)
-  const [corDoSaldo, setCorDoSaldo]=useState("entrada")
+  const [corDoSaldo, setCorDoSaldo] = useState("entrada")
   const navigate = useNavigate()
-  
 
-
+  const url = process.env.REACT_APP_API_URL
 
 
   useEffect(() => {
     const config = { headers: { Authorization: `Bearer ${sessao.token}` } }
-    if (!sessao.token){
+    if (!sessao.token) {
       navigate("/")
     }
-
-
-    const carregarHome = axios.get("http://localhost:5000/home", config)
-
+    const carregarHome = axios.get(`${url}/home`, config)
     carregarHome.then((res) => {
       console.log(res.data)
-
       setSaldo((res.data.saldoFinal))
       console.log((res.data.saldoFinal))
       setExtrato([...res.data.extratoDoUsuario])
-      if ((res.data.saldoFinal) <= 0){
-setCorDoSaldo("ish")
+      if ((res.data.saldoFinal) <= 0) {
+        setCorDoSaldo("ish")
       }
     })
-
-      carregarHome.catch((err) => {
+    carregarHome.catch((err) => {
       console.log(err.response.data)
       navigate("/")
-    })}, [])
-
-
-
-
-
-
-  function encerrarSessao(){
-    const config = { headers: { Authorization: `Bearer ${sessao.token}` } }
-    const sair = axios.delete("http://localhost:5000/sair", config)
-    sair.then((res)=>{
-      console.log(res.data)
-navigate("/")
-localStorage.removeItem("sessao");
-setSessao()
     })
-    sair.catch((err)=>{
+  }, [])
+
+
+
+
+
+
+  function encerrarSessao() {
+    const config = { headers: { Authorization: `Bearer ${sessao.token}` } }
+    const sair = axios.delete(`${url}/sair`, config)
+    sair.then((res) => {
+      console.log(res.data)
+      navigate("/")
+      localStorage.removeItem("sessao");
+      setSessao()
+    })
+    sair.catch((err) => {
       console.log(err.response.data)
     })
   }
 
-if (extrato.length === 0){
-  {
-    return (
-      <HomeContainer>
-        <Header>
-          <h1>Olá, {sessao.nome}</h1>
-          <BiExit onClick={encerrarSessao}/>
-        </Header>
+  if (extrato.length === 0) {
+    {
+      return (
+        <HomeContainer>
+          <Header>
+            <h1>Olá, {sessao.nome}</h1>
+            <BiExit onClick={encerrarSessao} />
+          </Header>
 
-        <TransactionsContainer>
+          <TransactionsContainer>
 
-          <ExtratoVazio> Não há registros de entrada ou saída</ExtratoVazio>
-        </TransactionsContainer>
+            <ExtratoVazio> Não há registros de entrada ou saída</ExtratoVazio>
+          </TransactionsContainer>
 
 
 
-        <ArticleSaldo>
+          <ArticleSaldo>
             <strong>Saldo</strong>
             <Value color={corDoSaldo}>R$ {saldo}</Value>
-        </ArticleSaldo>
+          </ArticleSaldo>
 
 
 
-        <ButtonsContainer>
-          <button>
-            <Link
-              to="/nova-transacao/entrada"
-            >
-              <AiOutlinePlusCircle />
-              <p>Nova <br /> entrada</p>
-            </Link>
-          </button>
+          <ButtonsContainer>
+            <button>
+              <Link
+                to="/nova-transacao/entrada"
+              >
+                <AiOutlinePlusCircle />
+                <p>Nova <br /> entrada</p>
+              </Link>
+            </button>
 
 
-          <button>
-            <Link to="/nova-transacao/saida">
-              <AiOutlineMinusCircle />
-              <p>Nova <br />saída</p>
-            </Link>
-          </button>
-        </ButtonsContainer>
+            <button>
+              <Link to="/nova-transacao/saida">
+                <AiOutlineMinusCircle />
+                <p>Nova <br />saída</p>
+              </Link>
+            </button>
+          </ButtonsContainer>
 
-      </HomeContainer>
-    )
-  }
+        </HomeContainer>
+      )
+    }
 
 
-}else {
+  } else {
 
     return (
       <HomeContainer>
         <Header>
           <h1>Olá, {sessao.nome}</h1>
-          <BiExit onClick={encerrarSessao}/>
+          <BiExit onClick={encerrarSessao} />
         </Header>
 
         <TransactionsContainer>
@@ -126,8 +120,8 @@ if (extrato.length === 0){
             {extrato.map((movimento, index) => (
               <Teste
 
-              key={index} 
-              index={index}
+                key={index}
+                index={index}
                 dia={movimento.dia}
                 descrição={movimento.descrição}
                 valor={parseFloat([movimento.valor])}
@@ -135,12 +129,12 @@ if (extrato.length === 0){
               />
             ))}
           </ul>
-          </TransactionsContainer>
-          <ArticleSaldo>
-            <strong>Saldo</strong>
-            <Value color={corDoSaldo}>R$ {saldo}</Value>
+        </TransactionsContainer>
+        <ArticleSaldo>
+          <strong>Saldo</strong>
+          <Value color={corDoSaldo}>R$ {saldo}</Value>
         </ArticleSaldo>
-        
+
         <ButtonsContainer>
           <button>
             <Link
@@ -161,7 +155,8 @@ if (extrato.length === 0){
 
       </HomeContainer>
     )
-  } }
+  }
+}
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;

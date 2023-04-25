@@ -13,14 +13,13 @@ export default function SignInPage() {
   const [email, setEmail]=useState("")
   const [senha, setSenha]=useState("")
   const { setSessao } = useContext(UsuarioContext)
-
+  const url = process.env.REACT_APP_API_URL
 
   function fazerLogin(e){
     e.preventDefault()
     const body = {email, senha}
-    axios.post("http://localhost:5000/", body)
+    axios.post(`${url}/`, body)
         .then(res =>{
-          console.log(res.data)
         const {nome, token} = res.data
         setSessao({nome, token})
         localStorage.setItem("sessao", JSON.stringify({nome, token}))
